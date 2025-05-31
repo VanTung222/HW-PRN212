@@ -61,6 +61,27 @@ namespace HW1
     // TODO: Implement a new concrete product class 'Truck' that implements IVehicle
     // The Truck should have properties for LoadCapacity (in tons) and FuelType
     // Implement the Drive() and DisplayInfo() methods accordingly
+    public class Truck : IVehicle
+    {
+        public double LoadCapacity { get; private set; }
+        public string FuelType { get; private set; }
+        public Truck(double loadCapacity, string fuelType)
+        {
+            LoadCapacity = loadCapacity;
+            FuelType = fuelType;
+        }
+
+        public void DisplayInfo()
+        {
+            Console.WriteLine($"Truck: Load Capacity: {LoadCapacity} tons, Fuel Type: {FuelType}");
+        }
+
+        public void Drive()
+        {
+            Console.WriteLine($"Driving a truck with {LoadCapacity} tons load capacity using {FuelType} fuel");
+        }
+
+    }
 
     // Abstract Creator
     public abstract class VehicleFactory
@@ -101,10 +122,34 @@ namespace HW1
     // TODO: Implement a concrete creator class 'MotorcycleFactory' that extends VehicleFactory
     // It should have fields for brand and engineCapacity
     // Override the CreateVehicle() method to return a new Motorcycle
+    public class MotorcycleFactory : VehicleFactory
+    {
+        private string _brand;
+        private int _engineCapacity;
+
+        public MotorcycleFactory(string brand, int engineCapacity)
+        {
+            _brand = brand;
+            _engineCapacity = engineCapacity;
+        }
+        public override IVehicle CreateVehicle() => new Motorcycle(_brand, _engineCapacity);
+
+    }
 
     // TODO: Implement a concrete creator class 'TruckFactory' that extends VehicleFactory
     // It should have fields for loadCapacity and fuelType
     // Override the CreateVehicle() method to return a new Truck
+    public class TruckFactory : VehicleFactory
+    {
+        private double _loadCapacity;
+        private string _fuelType;
+        public TruckFactory(double loadCapacity, string fuelType)
+        {
+            _loadCapacity = loadCapacity;
+            _fuelType = fuelType;
+        }
+        public override IVehicle CreateVehicle() => new Truck(_loadCapacity, _fuelType);
+    }
 
     class Program
     {
@@ -118,9 +163,13 @@ namespace HW1
 
             // TODO: Create a motorcycle using the MotorcycleFactory
             // Use brand "Harley Davidson" and engine capacity 1450
+            VehicleFactory motorcycleFactory = new MotorcycleFactory("Harley Davidson", 1450);
+            motorcycleFactory.OrderVehicle();
 
             // TODO: Create a truck using the TruckFactory
             // Use load capacity 10 tons and fuel type "Diesel"
+            VehicleFactory truckFactory = new TruckFactory(10, "Diesel");
+            truckFactory.OrderVehicle();
 
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();

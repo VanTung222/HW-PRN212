@@ -41,15 +41,23 @@ namespace HW2
                 // 3. Double-check if _instance is still null after acquiring the lock
                 // 4. If still null, create a new instance
                 // 5. Return the instance
-
-                return null; // Replace this with your implementation
+                if (_instance == null) {
+                    lock (_lock)
+                    {
+                        if (_instance == null)
+                        {
+                            _instance = new Logger();
+                        }
+                    }
+                }
+                return _instance; // Replace this with your implementation
             }
         }
 
         // Alternative implementation - Option #1 (eager initialization)
         // Students can uncomment and implement this approach as an alternative
         // Comment: This approach creates the instance when the class is loaded
-        /*
+
         // Private static instance initialized immediately (eager)
         private static readonly Logger _eagerInstance = new Logger();
         
@@ -61,12 +69,11 @@ namespace HW2
                 return _eagerInstance;
             }
         }
-        */
-
+  
         // Alternative implementation - Option #2 (simple thread-safe using lock only)
         // Students can uncomment and implement this approach as an alternative
         // Comment: This approach is thread-safe but less efficient
-        /*
+        
         public static Logger GetSimpleThreadSafeInstance
         {
             get
@@ -76,12 +83,17 @@ namespace HW2
                 // 2. Check if _instance is null
                 // 3. Create new instance if null
                 // 4. Return the instance
-                
-                return null; // Replace with implementation
+                lock (_lock)
+                {
+                    if (_instance == null)
+                    {
+                        _instance = new Logger();
+                    }
+                }
+                return _instance; // Replace with implementation
             }
         }
-        */
-
+        
         // Public property to access instance count (for demonstration)
         public static int InstanceCount
         {
@@ -96,6 +108,9 @@ namespace HW2
             //    Format example: "[2023-05-20 14:30:45] [INFO] User logged in"
             // 2. Add the formatted entry to _logMessages list
             // 3. Print the log entry to the console
+            string logEntry = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [INFO] {message}";
+            _logMessages.Add(logEntry);
+            Console.WriteLine(logEntry);
         }
 
         // Method to log an error message
@@ -104,6 +119,9 @@ namespace HW2
             // TODO: Implement LogError method
             // Similar to LogInfo but with ERROR level
             // Format example: "[2023-05-20 14:30:45] [ERROR] Database connection failed"
+            string logEntry = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [ERROR] {message}";
+            _logMessages.Add(logEntry);
+            Console.WriteLine(logEntry);
         }
 
         // Method to log a warning message
@@ -112,6 +130,9 @@ namespace HW2
             // TODO: Implement LogWarning method
             // Similar to LogInfo but with WARNING level
             // Format example: "[2023-05-20 14:30:45] [WARNING] Disk space low"
+            string logEntry = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [WARNING] {message}";
+            _logMessages.Add(logEntry);
+            Console.WriteLine(logEntry);
         }
 
         // Method to display all log entries
@@ -123,6 +144,17 @@ namespace HW2
             // 1. Check if there are any logs (_logMessages.Count > 0)
             // 2. If no logs, print a message saying "No log entries found."
             // 3. Otherwise, iterate through _logMessages and print each entry
+            if (_logMessages.Count > 0)
+            {
+                foreach (var log in _logMessages)
+                {
+                    Console.WriteLine(log);
+                }
+            }
+            else
+            {
+                Console.WriteLine("No log entries found.");
+            }
 
             Console.WriteLine("----- END OF LOGS -----\n");
         }
@@ -133,6 +165,8 @@ namespace HW2
             // TODO: Implement ClearLogs method
             // 1. Clear the _logMessages list (_logMessages.Clear())
             // 2. Print a message indicating that logs have been cleared
+            _logMessages.Clear();
+            Console.WriteLine("All log entries cleared.\n");
         }
     }
 
